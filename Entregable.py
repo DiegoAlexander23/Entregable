@@ -63,8 +63,11 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
-df = pd.read_csv("finanza.csv")
-data = df['Utilidad'].values.reshape(-1, 1)
+# Leer CSV y limpiar filas con NaN en 'Utilidad'
+res = pd.read_csv("finanza1.csv")
+res = res.dropna(subset=['Utilidad'])
+
+data = res['Utilidad'].values.reshape(-1, 1)
 
 scaler = MinMaxScaler()
 data_scaled = scaler.fit_transform(data)
@@ -74,25 +77,25 @@ pasos = 5
 for i in range(len(data_scaled) - pasos):
     X.append(data_scaled[i:i+pasos, 0])
     y.append(data_scaled[i+pasos, 0])
-X, y = np.array(X), np.array(y)
-X = X.reshape(X.shape[0], X.shape[1], 1)
+X = np.array(X).reshape(-1, pasos, 1)
+y = np.array(y)
 
 train_size = int(len(X) * 0.8)
 X_train, X_test = X[:train_size], X[train_size:]
 y_train, y_test = y[:train_size], y[train_size:]
 
 model = Sequential([
-    LSTM(50, activation='relu', input_shape=(pasos, 1)),
+    LSTM(50, activation='tanh', input_shape=(pasos, 1)),
     Dense(1)
 ])
 model.compile(optimizer='adam', loss='mse')
-
 model.fit(X_train, y_train, epochs=20, batch_size=8, verbose=0)
 
-# Predecir
 pred = model.predict(X_test)
 pred_inv = scaler.inverse_transform(pred)
+y_test_inv = scaler.inverse_transform(y_test.reshape(-1, 1))
 
-print("Predicciones ejercicio 3 (primeros 5 valores):", pred_inv[:5].flatten())
+print("Valores reales:", y_test_inv.flatten())
+print("Valores del modelo :", pred_inv.flatten())
 
 #Ejercicio 4 - Análisis de reportes financieros con NLTK (NLP)
