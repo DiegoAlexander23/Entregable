@@ -4,15 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-print("__________Datos de CSV__________")
 res = pd.read_csv("finanza1.csv")
 print(res)
 
-print("__________Datos Limpiados__________")
 res.dropna(inplace=True) #Eliminamos las filas vacias que esten vacios (NaN)
 print(res)
 
-print("__________Calcular estadisticas basicas__________")
 print("Descriptiva:")
 print(res.describe())
 
@@ -21,7 +18,6 @@ print("Utilidad total:", res['Utilidad'].sum())
 print("Promedio de ingresos:", res['Ingresos'].mean())#sumamos la ingreso y lo divimos
 print("Promedio de gastos:", res['Gastos'].mean())
 
-print("__________Vizualizaciones inciales con Matplotlib y Seaborn__________")
 plt.plot(res['Fecha'], res['Ingresos'], label='ingreso')
 plt.plot(res['Fecha'], res['Gastos'], label='gastos')
 plt.plot(res['Fecha'], res['Utilidad'], label='utilidad')
